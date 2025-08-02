@@ -16,8 +16,6 @@ void fh_sys(void);
 void fh_upt(void);
 void fh_pkgs(void);
 void fh_wm(void);
-void fh_cpu(void);
-void fh_gpu(void);
 void fh_mem(void);
 void fh_swp(void);
 void fh_user(int line);
@@ -361,104 +359,6 @@ void fh_wm(void){
 	print_info_line(5, info);
 }
 
-void fh_cpu(void){
-	FILE* f = fopen("/proc/cpuinfo", "r");
-	if(!f){
-		print_info_line(6, "cpu: n/a");
-		return;
-	}
-
-	char line[maxl];
-	char model[maxl] = {0};
-	double mhz = 0.0;
-	int cores = 0;
-	int threads = 0;
-	while(fgets(line, sizeof(line), f)){
-		if(strncmp(line, "model name", 10) == 0 && model[0] == '\0'){
-			char* colon = strchr(line, ':');
-			if(colon){
-				snprintf(model, sizeof(model), "%s", colon + 2);
-				model[strcspn(model, "\n")] = '\0';
-				char* p;
-				while((p = strstr(model, "(tm)"))) memmove(p, p + 4, strlen(p + 4) + 1);
-				while((p = strstr(model, "(r)"))) memmove(p, p + 3, strlen(p + 3) + 1);
-				while((p = strstr(model, "CPU"))) memmove(p, p + 3, strlen(p + 3) + 1);
- 				while((p = strstr(model, "Processor"))) memmove(p, p + 9, strlen(p + 9) + 1);
-				while((p = strstr(model, "processor"))) memmove(p, p + 9, strlen(p + 9) + 1);
-				size_t len = strlen(model);
-				while(len > 0 && isspace(model[len - 1])) model[--len] = '\0';
-			}
-		}
-
-		if(strncmp(line, "cpu MHz", 7) == 0 && mhz == 0.0){
-			char* colon = strchr(line, ':');
-			if(colon) mhz = atof(colon + 1);
-		}
-
-		if(strncmp(line, "cpu cores", 9) == 0 && cores == 0){
-			char* colon = strchr(line, ':');
-			if(colon) cores = atoi(colon + 1);
-		}
-
-		if(strncmp(line, "siblings", 8) == 0 && threads == 0){
-			char *colon = strchr(line, ':');
-			if(colon) threads = atoi(colon + 1);
-		}
-
-		if(model[0] && mhz > 0.0 && cores > 0 && threads > 0) break;
-	}
-
-	fclose(f);
-	if(model[0]){
-		char info[maxl];
-		snprintf(info, sizeof(info), "cpu: %s [%dc%dt] @ %.1fg", model, cores, threads, mhz / 1000.0);
-		to_lwr_str(info);
-		print_info_line(6, info);
-	} else {
-		print_info_line(6, "cpu: n/a");
-	}
-}
-
-void fh_gpu(void){
-	FILE* f = popen("lspci | grep -iE 'vga|3d|display'", "r");
-	if(!f){
-		print_info_line(7, "gpu: n/a");
-		return;
-	}
-
-	char line[maxl];
-	if(!fgets(line, sizeof(line), f)){
-		print_info_line(7, "gpu: n/a");
-		pclose(f);
-		return;
-	}
-
-	fclose(f);
-	char* start = line;
-	char radeon_model[maxl] = {0};
-	while((start = strchr(start, '['))){
-		char* end = strchr(start, ']');
-		if(!end) break;
-		*end = '\0';
-		if(strcasestr(start, "radeon")){
-			strncpy(radeon_model, start + 1, sizeof(radeon_model) - 1);
-			radeon_model[sizeof(radeon_model) - 1] = '\0';
-		}
-
-		*end = ']';
-		start = end + 1;
-	}
-
-	if(strlen(radeon_model) > 0){
-		char info[maxl];
-		snprintf(info, sizeof(info), "gpu: amd ati %s", radeon_model);
-		to_lwr_str(info);
-		print_info_line(7, info);
-	} else {
-		print_info_line(7, "gpu: n/a");
-	}
-}
-
 void fh_mem(void){
 	FILE* f = fopen("/proc/meminfo", "r");
 	if(f){
@@ -479,7 +379,7 @@ void fh_mem(void){
 			long used = total - free - bufs - cached;
 			char info[maxl];
 			snprintf(info, sizeof(info), "mem: %ldm / %ldm", used/1024, total/1024);
-			print_info_line(8, info);
+			print_info_line(6, info);
 		}
 	}
 }
@@ -499,7 +399,7 @@ void fh_swp(void){
 		if(total > 0){
 			char info[maxl];
 			snprintf(info, sizeof(info), "swp: %ldm / %ldm", (total-free)/1024, total/1024);
-			print_info_line(9, info);
+			print_info_line(7, info);
 		}
 	}
 }
@@ -562,8 +462,6 @@ int main(int argc, char *argv[]){
 	fh_upt();
 	fh_pkgs();
 	fh_wm();
-	fh_cpu();
-	fh_gpu();
 	fh_mem();
 	fh_swp();
 	fh_disk();
