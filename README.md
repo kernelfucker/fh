@@ -8,4 +8,4 @@ $ clang fh.c -o fh -Wall -Werror -Os -s
 $ ./fh
 
 # example
-<img width="720" height="350" alt="image" src="https://github.com/user-attachments/assets/a5653a09-bf88-40d9-98b1-889b962bc368" />
+<img width="450" height="290" alt="image" src="https://github.com/user-attachments/assets/f2cee847-898c-456e-985d-9e707aad980c" />
