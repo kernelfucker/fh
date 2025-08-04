@@ -76,7 +76,7 @@ void print_ascii(const char* dist){
         	ascii.h = 6;
 	}
 
-	else if(strcmp(dist, "void") == 0){
+	else if(strcmp(dist, "\"void\"") == 0){
 		ascii.lines[0] = "    _______";
 		ascii.lines[1] = " _ \\______ -";
 		ascii.lines[2] = "| \\  ___  \\ |";
