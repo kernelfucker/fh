@@ -273,7 +273,7 @@ void fh_pkgs(void){
 	} keepers[] = {
 		{"pacman -Qq | wc -l", "pacman", "/usr/bin/pacman"},
 		{"dpkg-query -f '.\\n' -W | wc -l", "dpkg", "/usr/bin/dpkg-query"},
-		{"xbps-query -l | wc -l", "xbps", "/usr/bin/xbps-query"},
+		{"xbps-query -l | wc -l", "xbps-query", "/usr/bin/xbps-query"},
 		{"rpm -qa | wc -l", "rpm", "/bin/rpm"},
 		{"apk list --installed | wc -l", "apk", "/sbin/apk"},
 		{"qlist -I | wc -l", "emerge", "/usr/bin/qlist"},
