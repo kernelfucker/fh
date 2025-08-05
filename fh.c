@@ -76,7 +76,7 @@ void print_ascii(const char* dist){
         	ascii.h = 6;
 	}
 
-	else if(strcmp(dist, "\"void\"") == 0){
+	else if(strcmp(dist, "void") == 0){
 		ascii.lines[0] = "    _______";
 		ascii.lines[1] = " _ \\______ -";
 		ascii.lines[2] = "| \\  ___  \\ |";
@@ -179,6 +179,7 @@ void fh_sys(void){
 		while(fgets(line, maxl, f)){
 			if(strncmp(line, "ID=", 3) == 0){
 				char* id = strchr(line, '=') + 1;
+				if(*id == '"') id++;				
 				size_t len = strcspn(id, "\n\"");
 				memcpy(dist, id, len);
 				dist[len] = '\0';
@@ -189,6 +190,7 @@ void fh_sys(void){
 		fclose(f);
 	}
 
+	to_lwr_str(dist);
 	print_ascii(dist);
 
 	char p_name[maxl] = {0};
