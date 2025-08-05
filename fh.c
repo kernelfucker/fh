@@ -87,6 +87,18 @@ void print_ascii(const char* dist){
 		ascii.h = 7;
 	}
 
+	
+	else if(strcmp(dist, "gentoo") == 0){
+		ascii.lines[0] = " _-----_";
+		ascii.lines[1] = "(       \\";
+		ascii.lines[2] = "\\    0   \\";
+		ascii.lines[3] = " \\        )";
+		ascii.lines[4] = " /      _/";
+		ascii.lines[5] = "(     _-";
+		ascii.lines[6] = "\\____-";
+		ascii.h = 7;
+	}
+
 	else if(strcmp(dist, "fedora") == 0){
 		ascii.lines[0] = "      _____";
 		ascii.lines[1] = "     /   __)\\";
@@ -109,15 +121,14 @@ void print_ascii(const char* dist){
 		ascii.h = 6;
 	}
 
-	else if(strcmp(dist, "gentoo") == 0){
-		ascii.lines[0] = " _-----_";
-		ascii.lines[1] = "(       \\";
-		ascii.lines[2] = "\\    0   \\";
-		ascii.lines[3] = " \\        )";
-		ascii.lines[4] = " /      _/";
-		ascii.lines[5] = "(     _-";
-		ascii.lines[6] = "\\____-";
-		ascii.h = 7;
+	else if(strcmp(dist, "endeavouros") == 0){
+		ascii.lines[0] = "      /\\";
+		ascii.lines[1] = "    //  \\\\";
+		ascii.lines[2] = "   //    \\ \\";
+		ascii.lines[3] = " / /     _) )";
+		ascii.lines[4] = "/_/___-- __-";
+		ascii.lines[5] = " /____--";
+		ascii.h = 6;
 	}
 
 	else if(strcmp(dist, "openbsd") == 0){
