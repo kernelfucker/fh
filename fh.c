@@ -87,7 +87,6 @@ void print_ascii(const char* dist){
 		ascii.h = 7;
 	}
 
-	
 	else if(strcmp(dist, "gentoo") == 0){
 		ascii.lines[0] = " _-----_";
 		ascii.lines[1] = "(       \\";
