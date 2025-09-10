@@ -294,6 +294,7 @@ void fh_pkg(void){
 
 	print_info_line(4, info);
 }
+
 void fh_mem(void){
 	FILE* f = fopen("/proc/meminfo", "r");
 	if(f){
