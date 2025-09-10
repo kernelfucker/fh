@@ -14,12 +14,11 @@
 
 void fh_sys(void);
 void fh_upt(void);
-void fh_pkgs(void);
-void fh_wm(void);
+void fh_pkg(void);
 void fh_mem(void);
 void fh_swp(void);
-void fh_user(int line);
-void fh_disk(void);
+void fh_usr(int line);
+void fh_dsk(void);
 void print_ascii(const char *dist);
 void print_info_line(int ascii_line, const char* info);
 void to_lwr_case(char *str);
@@ -127,27 +126,6 @@ void print_ascii(const char* dist){
 		ascii.lines[3] = " / /     _) )";
 		ascii.lines[4] = "/_/___-- __-";
 		ascii.lines[5] = " /____--";
-		ascii.h = 6;
-	}
-
-	else if(strcmp(dist, "openbsd") == 0){
-		ascii.lines[0] = "      _____";
-		ascii.lines[1] = "    \\-     -/";
-		ascii.lines[2] = " \\_/         \\";
-		ascii.lines[3] = " |        O O |";
-		ascii.lines[4] = " |_  <   )  3 )";
-		ascii.lines[5] = " / \\         /";
-		ascii.lines[6] = "    /-_____-\\";
-		ascii.h = 7;
-	}
-
-	else if(strcmp(dist, "freebsd") == 0){
-		ascii.lines[0] = "/\\,-'''''-,/\\";
-		ascii.lines[1] = "\\_)       (_/";
-		ascii.lines[2] = "|           |";
-		ascii.lines[3] = "|           |";
-		ascii.lines[4] = " ;         ;";
-		ascii.lines[5] = "  '-_____-'";
 		ascii.h = 6;
 	}
 
@@ -277,7 +255,7 @@ int try_pk(const char* c, const char* name, const char* bin){
 	return 0;
 }
 
-void fh_pkgs(void){
+void fh_pkg(void){
 	struct {
 		const char* c;
 		const char* name;
@@ -294,7 +272,7 @@ void fh_pkgs(void){
 		{NULL, NULL, NULL}
 	};
 
-	char info[maxl] = "pkgs: ";
+	char info[maxl] = "pkg: ";
 	int first = 1;
 	for(int i = 0; keepers[i].c; i++){
 		int cn = try_pk(keepers[i].c, keepers[i].name, keepers[i].bin);
@@ -316,61 +294,6 @@ void fh_pkgs(void){
 
 	print_info_line(4, info);
 }
-
-void fh_wm(void){
-	FILE *f = f = popen("xprop -root _NET_SUPPORTING_WM_CHECK 2>/dev/null", "r");
-	if(!f){
-		print_info_line(5, "wm: n/a");
-		return;
-	}
-
-	char line[maxl];
-	if(!fgets(line, sizeof(line), f)){
-		print_info_line(5, "wm: n/a");
-		pclose(f);
-		return;
-	}
-
-	pclose(f);
-	char *id_st = strchr(line, '#');
-	if(!id_st){
-		print_info_line(5, "wm: n/a");
-		return;
-	}
-
-	id_st++;
-	char w_id[maxl];
-	sscanf(id_st, "%s", w_id);
-	char c[maxl];
-	snprintf(c, sizeof(c), "xprop -id %s _NET_WM_NAME", w_id);
-	f = popen(c, "r");
-	if(!f){
-		print_info_line(5, "wm: n/a");
-		return;
-	}
-
-	if(!fgets(line, sizeof(line), f)){
-		print_info_line(5, "wm: n/a");
-		pclose(f);
-		return;
-	}
-
-	pclose(f);
-	char *name_st = strchr(line, '"');
-	if(!name_st){
-		print_info_line(5, "wm: n/a");
-		return;
-	}
-
-	name_st++;
-	char *name_end = strchr(name_st, '"');
-	if(name_end) *name_end = '\0';
-	char info[maxl];
-	snprintf(info, sizeof(info), "wm: %s", name_st);
-	to_lwr_str(info);
-	print_info_line(5, info);
-}
-
 void fh_mem(void){
 	FILE* f = fopen("/proc/meminfo", "r");
 	if(f){
@@ -391,7 +314,7 @@ void fh_mem(void){
 			long used = total - free - bufs - cached;
 			char info[maxl];
 			snprintf(info, sizeof(info), "mem: %ldm / %ldm", used/1024, total/1024);
-			print_info_line(6, info);
+			print_info_line(5, info);
 		}
 	}
 }
@@ -411,19 +334,19 @@ void fh_swp(void){
 		if(total > 0){
 			char info[maxl];
 			snprintf(info, sizeof(info), "swp: %ldm / %ldm", (total-free)/1024, total/1024);
-			print_info_line(7, info);
+			print_info_line(6, info);
 		}
 	}
 }
 
-void fh_user(int line){
+void fh_usr(int line){
 	char* user = getenv("USER");
 	char info[maxl];
-	snprintf(info, sizeof(info), "user: %s", user ? user : "n/a");
+	snprintf(info, sizeof(info), "usr: %s", user ? user : "n/a");
 	print_info_line(line, info);
 }
 
-void fh_disk(void){
+void fh_dsk(void){
 	FILE *f = popen("df -h --output=target,used,size,fstype 2>/dev/null | tail -n +2", "r");
 	if(f){
 		char mount[maxl], used[maxl], size[maxl], fstype[maxl];
@@ -434,16 +357,16 @@ void fh_disk(void){
 				to_lwr_case(used);
 				to_lwr_case(size);
 				char info[maxl];
-				snprintf(info, sizeof(info), "disk [%s]: %s / %s", mount, used, size);
+				snprintf(info, sizeof(info), "dsk: [%s] %s / %s", mount, used, size);
 				print_info_line(line + disk_lines, info);
 				disk_lines++;
 			}
 		}
 
 		pclose(f);
-		fh_user(line + disk_lines);
+		fh_usr(line + disk_lines);
 	} else {
-		fh_user(ascii.h);
+		fh_usr(ascii.h);
 	}
 }
 
@@ -472,11 +395,10 @@ int main(int argc, char *argv[]){
 	fh_sys();
 	fh_hst();
 	fh_upt();
-	fh_pkgs();
-	fh_wm();
+	fh_pkg();
 	fh_mem();
 	fh_swp();
-	fh_disk();
+	fh_dsk();
 
 	return 0;
 }
