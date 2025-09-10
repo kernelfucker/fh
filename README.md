@@ -11,4 +11,4 @@ $ ./fh
 **this project is just finished, report if there are any problems**
 
 # example
-<img width="450" height="290" alt="image" src="https://github.com/user-attachments/assets/e0a40330-547d-46d0-b71f-ff12d5fd8f2c" />
+<img width="500" height="325" alt="image" src="https://github.com/user-attachments/assets/cb86aacd-3d3b-4c3d-8532-ec65fd98b881" />
