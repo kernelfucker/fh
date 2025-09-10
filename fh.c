@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <sys/utsname.h>
 
-#define version "0.1"
+#define version "0.2"
 
 #define maxl 256
 #define offset 0
